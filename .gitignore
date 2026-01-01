@@ -1,5 +1,6 @@
 tmp/
 *.pdf
+*.synctex.gz
 
 # In case you are not using latexmk with the output directory set:
 *.aux
