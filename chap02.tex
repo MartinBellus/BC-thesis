@@ -1,5 +1,226 @@
-\chapter{Title of the second chapter}
+\def\EDF{\text{EDF}_\alpha}
+\def\OPT{\text{OPT}}
 
-\section{Title of the first subchapter of the second chapter}
+\chapter{Analysis of the $\EDF$ algorithm}
 
-\section{Title of the second subchapter of the second chapter}
+A result from Chin \emph{et al.} \cite{CHIN2006255} states that the $\EDF$
+algorithm is $\phi$-competitive on $3$-bounded instances. Therefore, it cannot
+be worse than $\phi$-competitive on $(2,3)$-bounded instances, which are a
+subset of $3$-bounded instances. In this chapter, we show that the competitive
+ratio cannot be further improved on $(2,3)$-bounded instances.
+
+\section{Preliminaries}
+
+\begin{algorithm}
+\caption{The $\EDF$ Algorithm}
+\begin{algorithmic}[1]
+
+\While{there are pending packets in the buffer}
+\State $h \gets \text{heaviest pending packet}$
+\State $d \gets \text{pending packet with the earliest deadline satisfying } \alpha w_d \geq w_h$
+\State $e \gets \text{heaviest pending packet with the same deadline as } d$
+\State schedule $e$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+In this chapter we define $\beta$ as $\sqrt{\alpha}$.
+
+We assume that the additive constant $a$ in the competitive ratio is $0$. This
+assumption can be easily removed since the $\EDF$ algorithm does not change
+scheduled packets if their weights are scaled by the same factor. Therefore, we
+can multiply the weight of each packet by $x \gg a$, which makes the additive
+constant negligible.
+
+\section{Results}
+
+\begin{lemma}\label{lem:edf-I1}
+There exists a $(2,3)$-bounded instance where the competitive ratio of $\EDF$
+is at least $1 + \frac{1}{\alpha} - \varepsilon$ for all parameters $\alpha \geq 1$
+and $\varepsilon > 0$.
+\end{lemma}
+
+\begin{proof}
+Let $\delta$ be equal to $\varepsilon \alpha$. Since the competitive ratio cannot
+be lower than $1$, this lemma holds trivially when $\frac{1}{\alpha} \leq
+\varepsilon$. Therefore, we can assume that $\frac{1}{\alpha} - \varepsilon \in (0,1)$.
+
+\begin{gather*}
+\varepsilon \alpha = \delta > \delta (\frac{1}{\alpha} - \varepsilon) \\
+0 > \frac{\delta}{\alpha} - \varepsilon(\alpha + \delta) \\
+1 > \frac{\delta + \alpha}{\alpha} - \varepsilon(\alpha + \delta) \\
+\frac{1}{\alpha + \delta} > \frac{1}{\alpha} - \varepsilon
+\end{gather*}
+
+We will construct an instance $I_1$ (as shown in Figure \ref{img:edf-I1}). In
+the first step, the adversary releases two packets of weight $1$ with span $2$
+and one packet of weight $\alpha + \delta$ with span $3$. Because $\alpha +
+\delta > \alpha \cdot 1$, the $\EDF$ algorithm schedules the heaviest packet. In
+the next step, the adversary releases a single packet with weight $\alpha +
+\delta$ and span $3$. The $\EDF$ algorithm again schedules the heaviest packet,
+resulting in a gain of $2(\alpha + \delta)$.
+
+The optimal algorithm can schedule all packets, resulting in a gain of $2 +
+2(\alpha + \delta)$. The competitive ratio is:
+
+\[
+\frac{W_{\OPT}}{W_{\EDF}} = \frac{2 + 2(\alpha + \delta)}{2(\alpha + \delta)} = 1 + \frac{1}{\alpha + \delta}
+\]
+
+By the choice of $\delta$ we have that $1 + \frac{1}{\alpha + \delta} > 1 +
+\frac{1}{\alpha} - \varepsilon$, which concludes this proof.
+\end{proof}
+
+\begin{figure}[h]\centering
+\includegraphics{img/edf-i1}
+\caption{Instance $I_1$ used in Lemma \ref{lem:edf-I1}.}
+\label{img:edf-I1}
+\end{figure}
+
+\begin{lemma}\label{lem:edf-I2}
+There exists a $(2,3)$-bounded instance, where the competitive ratio of $\EDF$
+is at least $2 - \frac{2 - \beta}{\beta^2 - \beta + 1} - \varepsilon$ for all
+paramteres $\alpha \geq 1$ and $\varepsilon > 0$.
+\end{lemma}
+
+\begin{proof}
+To begin the instance $I_2$, the adversary releases two packets of weight $1$ with
+span $2$ and one packet of weight $\beta$ with span $3$. At step $t$, where $2
+\leq t \leq n$, the adversary releases one packet of weight $\beta^t$ with span
+$3$. To end the instance, at step $n+1$, the adversary releases two packets of weight
+$\beta^{n+1}$ with span $2$.
+
+In the first step, the $\EDF$ algorithm has pending packets of weights $1$ and
+$\beta$, so it schedules the most urgent packet. In step $2 \leq t \leq n$, the
+pending packets of $\EDF$ have weights $\beta^{t-2}$, $\beta^{t-1}$, and
+$\beta^t$. Since $\alpha \beta^{t-2} \geq \beta^t$, $\EDF$ again schedules the
+most urgent packet. In step $n+1$, the pending packets are of weights
+$\beta^{n-1}$, $\beta^n$, and $\beta^{n+1}$, so $\EDF$ schedules the most urgent
+packet. In the last step $n+2$, the algorithm schedules the heaviest packet of
+weight $\beta^{n+1}$. The total gain of the $\EDF$ algorithm is:
+
+\[
+W_{\EDF} = 1 + \sum_{i = 0}^{n-1} {\beta^i} + \beta^{n+1} = 1 + \frac{\beta^n - 1}{\beta-1} + \beta^{n+1}
+\]
+
+We now compute the limit of $\frac{W_{\EDF}}{\beta^n}$ as $n$ approaches $\infty$:
+
+\begin{equation}\label{I2:eq1}
+\lim_{n \to \infty} \frac{W_{\EDF}}{\beta^n} = \lim_{n \to \infty}
+\frac{1}{\beta^n} + \frac{1}{\beta-1} - \frac{1}{\beta^n(\beta - 1)} + \beta =
+\beta + \frac{1}{\beta - 1}
+\end{equation}
+
+The optimal algorithm can take the heaviest packet in every step, resulting in a gain of:
+
+\[
+W_{\OPT} = \sum_{i = 1}^{n+1} {\beta^i} + \beta^{n+1} = \frac{\beta^{n+2} - \beta}{\beta - 1} + \beta^{n+1}
+\]
+
+We again compute the limit of $\frac{W_{\OPT}}{\beta^n}$ as $n$ approaches $\infty$:
+
+\begin{equation}\label{I2:eq2}
+\lim_{n \to \infty} \frac{W_{\OPT}}{\beta^n} = \frac{\beta^2}{\beta - 1} - \frac{1}{\beta^{n-1}(\beta - 1)} + \beta = \frac{\beta^2}{\beta - 1} + \beta
+\end{equation}
+
+Combining \ref{I2:eq1} and \ref{I2:eq2}, we compute the limit of the competitive
+ratio:
+
+\[
+\lim_{n \to \infty} \frac{W_{\OPT}}{W_{\EDF}} = \frac{\frac{\beta^2}{\beta - 1} + \beta}{\beta + \frac{1}{\beta - 1}}
+= \frac{2\beta^2 - \beta}{\beta^2 - \beta + 2}
+= 2 - \frac{2 - \beta}{\beta^2 - \beta + 1}
+\]
+
+Therefore for all $\varepsilon > 0$ there exists $n$ such that
+$\frac{W_{\OPT}}{W_{\EDF}} \geq 2 - \frac{2 - \beta}{\beta^2 - \beta + 1} -
+\varepsilon$.
+\end{proof}
+
+\begin{figure}[h]\centering
+\includegraphics{img/edf-i2.pdf}
+\caption{Instance $I_2$ used in Lemma \ref{lem:edf-I2}.}
+\label{img:edf-I2}
+\end{figure}
+
+\begin{lemma}\label{lem:edf-I3}
+There exists a $(2,3)$-bounded instance, where the competitive ratio of $\EDF$
+is at least $1 + \frac{3\beta^2 - 2\beta - 1}{2\beta^4 - 2\beta^3 + 1} -
+\varepsilon$ for all paramteres $\alpha \geq 1$ and $\varepsilon > 0$.
+\end{lemma}
+
+\begin{proof}
+The beginning of instance $I_3$ is the same as in Lemma \ref{lem:edf-I2}. To end
+the instance, in step $n+1$, the adversary releases two packets of weight
+$\beta^{n}$ with span $2$ and one packet of weight $\beta^{n+2} + 1$ with
+span $3$. In step $n+2$, the adversary releases a single packet of weight
+$\beta^{n+2} + 1$ with span $3$.
+
+In the first $n$ steps, the $\EDF$ algorithm behaves exactly the same as on
+instance $I_2$ \ref{lem:edf-I2}, taking the most urgent packets. At step $n+1$,
+the $\EDF$ algorithm has pending packets of weights $\beta^{n-1}$, $\beta^n$ and
+$\beta^{n+2} + 1$. Since $\alpha \beta^n < \beta^{n+2} + 1$, the
+algorithm schedules the heaviest packet. At step $n+2$, the algorithm has
+pending packets of weights $\beta^n$ and $\beta^{n+2} + 1$, so it again
+schedules the heaviest packet. This results in a gain of:
+
+\[
+W_{\EDF} = 1 + \sum_{i = 0}^{n-2} \beta^i + 2(\beta^{n+2} + 1) = 1 + \frac{\beta^{n-1} - 1}{\beta - 1} + 2(\beta^{n+2} + 1)
+\]
+
+Taking the limit of $\frac{W_{\EDF}}{\beta^{n-1}}$ as $n$ goes to $\infty$ gives us:
+
+\begin{equation}\label{I3:eq1}
+\lim_{n \to \infty} \frac{W_{\EDF}}{\beta^{n-1}} =
+\lim_{n \to \infty} \frac{1}{\beta^{n-1}} + \frac{1}{\beta - 1} -
+\frac{1}{\beta^{n-1}(\beta - 1)} + 2\beta^3 + \frac{2}{\beta^{n-1}} =
+2 \beta^3 + \frac{1}{\beta + 1}
+\end{equation}
+
+The optimal algorithm can take the heaviest packet in each step, resulting in a gain of:
+
+\[
+W_{\OPT} = \sum_{i=1}^n \beta^i + 2\beta^n + 2(\beta^{n+2} + 1) =
+\frac{\beta^{n+1} - \beta}{\beta - 1} + 2\beta^n + 2(\beta^{n+2} + 1)
+\]
+
+We again compute the limit of $\frac{W_{\OPT}}{\beta^n}$ as $n$ approaches $\infty$:
+
+\begin{equation}\label{I3:eq2}
+\lim_{n \to \infty} \frac{W_{\OPT}}{\beta^{n-1}} =
+\lim_{n \to \infty} \frac{\beta^2}{\beta - 1} -
+\frac{1}{\beta^{n-2}(\beta - 1)} + 2\beta + 2\beta^3 + \frac{2}{\beta^{n-1}} =
+\frac{\beta^2}{\beta-1} + 2\beta + 2\beta^3
+\end{equation}
+
+Combining \ref{I3:eq1} and \ref{I3:eq2}, we compute the limit of the competitive
+ratio:
+
+\[
+\lim_{n \to \infty} \frac{W_{\OPT}}{W_{\EDF}} =
+\frac{2\beta^3 + 2\beta + \frac{\beta^2}{\beta-1}}{2\beta^3 + \frac{1}{\beta - 1}} =
+\frac{2\beta^4 - 2\beta^3 + 3\beta^3 - 2\beta}{2\beta^4 - 2\beta^3 + 1} =
+1 + \frac{3\beta^2 - 2\beta - 1}{2\beta^4 - 2\beta^3 + 1}
+\]
+
+Therefore for all $\varepsilon > 0$ there exists $n$ such that
+$\frac{W_{\OPT}}{W_{\EDF}} \geq 1 + \frac{3\beta^2 - 2\beta - 1}{2\beta^4 - 2\beta^3 + 1} - \varepsilon$.
+\end{proof}
+
+\begin{figure}[h]\centering
+\includegraphics{img/edf-i3.pdf}
+\caption{Instance $I_3$ used in Lemma \ref{lem:edf-I3}.}
+\label{img:edf-I3}
+\end{figure}
+
+\begin{thm}
+The competitive ratio of $\EDF$ algorithm on $(2,3)$-bounded instances is at
+least $\phi - \varepsilon$ for all $\varepsilon > 0$.
+\end{thm}
+\begin{proof}
+Based on the known parameter $\alpha$, the adversary can choose one of the three
+instances from Lemmas \ref{lem:edf-I1}, \ref{lem:edf-I2}, and \ref{lem:edf-I3}
+which maximizes the competitive ratio.
+
+\xxx{TODO}
+\end{proof}
