@@ -1,0 +1,32 @@
+\ExplSyntaxOn
+\newcounter{row}
+
+\NewDocumentCommand{\DrawPackets}{mm}
+  {
+    \setcounter{row}{0}
+    \clist_map_inline:nn {#1}
+      {
+        \str_if_eq:nnTF {##1} {dots}
+          {
+            % draw three dots and skip 3 rows
+            \node[scale=2] at ({#2+0.5}, -\value{row}) {$\ddots$};
+            \addtocounter{row}{2}
+          }
+          {
+            \draw_packet_aux:w ##1 \q_stop
+            \stepcounter{row}
+          }
+      }
+  }
+
+\cs_new_protected:Npn \draw_packet_aux:w #1/#2/#3 \q_stop
+  {
+    \draw ({#1}, -\value{row}) -- ({#1+#2}, -\value{row});
+
+    \foreach \i in {0,...,#2} {
+      \draw ({#1+\i}, -\value{row}+0.2) -- ({#1+\i}, -\value{row}-0.2);
+    }
+
+    \node at ({-0.5}, -\value{row}) {#3};
+  }
+\ExplSyntaxOff

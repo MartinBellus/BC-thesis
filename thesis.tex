@@ -85,6 +85,11 @@
 \usepackage{fancyvrb}       % improved verbatim environment
 \usepackage{listings}       % pretty-printer of source code
 
+\usepackage{tikz}        % drawing engine (sometimes optional, but good to include)
+\usetikzlibrary{calc}
+\usepackage{pgfplots}    % plotting
+\pgfplotsset{compat=1.18}
+
 % You might want to use cleveref for references
 % \usepackage{cleveref}
 
@@ -115,6 +120,7 @@
 
 % Our definitions of macros (see description inside)
 \input macros.tex
+\input{tex/draw-instance.tex}
 
 %%% Title page and various mandatory informational pages
 \begin{document}
