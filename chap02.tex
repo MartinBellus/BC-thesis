@@ -30,7 +30,7 @@ We assume that the additive constant $a$ in the competitive ratio is $0$. This
 assumption can be easily removed since the $\EDF$ algorithm does not change
 scheduled packets if the weights of all packets are scaled by the same factor.
 Thus, we can multiply the weight of each packet by $x \gg a$, making
-the additive constant negligible.
+the additive constant negligible. \xxx{TODO this works in general for any deterministic algorithm.}
 
 \section{Results}
 
@@ -128,7 +128,7 @@ ratio:
 
 \[
 \lim_{n \to \infty} \frac{W_{\OPT}}{W_{\EDF}} = \frac{\frac{\beta^2}{\beta - 1} + \beta}{\beta + \frac{1}{\beta - 1}}
-= \frac{2\beta^2 - \beta}{\beta^2 - \beta + 2}
+= \frac{2\beta^2 - \beta}{\beta^2 - \beta + 1}
 = 2 - \frac{2 - \beta}{\beta^2 - \beta + 1}
 \]
 
@@ -157,7 +157,7 @@ span $3$. In step $n+2$, the adversary releases a single packet of weight
 $\beta^{n+2} + 1$ with span $3$.
 
 In the first $n$ steps, the $\EDF$ algorithm behaves exactly the same as on
-instance $I_2$ \ref{lem:edf-I2}, taking the most urgent packets. At step $n+1$,
+instance $I_2$, taking the most urgent packets. At step $n+1$,
 the $\EDF$ algorithm has pending packets of weights $\beta^{n-1}$, $\beta^n$ and
 $\beta^{n+2} + 1$. Since $\alpha \beta^n < \beta^{n+2} + 1$, the
 algorithm schedules the heaviest packet. At step $n+2$, the algorithm has
@@ -177,7 +177,8 @@ Taking the limit of $\frac{W_{\EDF}}{\beta^{n-1}}$ as $n$ approaches $\infty$ gi
 2 \beta^3 + \frac{1}{\beta + 1}
 \end{equation}
 
-The optimal algorithm can take the heaviest packet in each step, resulting in a gain of:
+The optimal algorithm schedules all packets except the first two packets of
+weight $1$, resulting in a gain of:
 
 \[
 W_{\OPT} = \sum_{i=1}^n \beta^i + 2\beta^n + 2(\beta^{n+2} + 1) =
@@ -199,7 +200,7 @@ ratio:
 \[
 \lim_{n \to \infty} \frac{W_{\OPT}}{W_{\EDF}} =
 \frac{2\beta^3 + 2\beta + \frac{\beta^2}{\beta-1}}{2\beta^3 + \frac{1}{\beta - 1}} =
-\frac{2\beta^4 - 2\beta^3 + 3\beta^3 - 2\beta}{2\beta^4 - 2\beta^3 + 1} =
+\frac{2\beta^4 - 2\beta^3 + 3\beta^2 - 2\beta}{2\beta^4 - 2\beta^3 + 1} =
 1 + \frac{3\beta^2 - 2\beta - 1}{2\beta^4 - 2\beta^3 + 1}
 \]
 
