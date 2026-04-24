@@ -29,4 +29,13 @@
 
     \node at ({-0.5}, -\value{row}) {#3};
   }
+
+\NewDocumentCommand{\TakeOpt}{mm}
+  {
+    \draw[color=green, thick] (#1, -#2 - 0.1) -- (#1 + 1, -#2 - 0.1)
+  }
+\NewDocumentCommand{\TakeAlg}{mm}
+{
+    \draw[color=red, thick] (#1, -#2 + 0.1) -- (#1 + 1, -#2 + 0.1)
+}
 \ExplSyntaxOff
