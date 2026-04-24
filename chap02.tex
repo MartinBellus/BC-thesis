@@ -214,14 +214,23 @@ $\frac{W_{\OPT}}{W_{\EDF}} \geq 1 + \frac{3\beta^2 - 2\beta - 1}{2\beta^4 - 2\be
 \label{img:edf-I3}
 \end{figure}
 
+\begin{figure}[h]\centering
+\input{tex/edf-instance-plot}
+\caption{Upper bounds on the competitive ratio given by instances $I_1$, $I_2$, and $I_3$.}
+\label{img:edf-instances-plot}
+\end{figure}
+
 \begin{thm}
 The competitive ratio of $\EDF$ algorithm on $(2,3)$-bounded instances is at
 least $\phi - \varepsilon$ for all $\varepsilon > 0$.
 \end{thm}
 \begin{proof}
-Based on the known parameter $\alpha$, the adversary can choose one of the three
-instances from Lemmas \ref{lem:edf-I1}, \ref{lem:edf-I2}, and \ref{lem:edf-I3}
-which maximizes the competitive ratio.
+Given the parameter $\alpha$, the adversary can choose one of the three
+instances from Lemmas \ref{lem:edf-I1}, \ref{lem:edf-I2}, and \ref{lem:edf-I3},
+that maximizes the competitive ratio.
 
-\xxx{TODO}
+As shown in Figure \ref{img:edf-instances-plot}, this maximum is minimized when
+the bounds for instances $I_1$ and $I_3$ are tight. Using basic algebra, we can
+derive that the minimum is attained at $\alpha = \phi$, in which case the
+competitive ratio equals $\phi$.
 \end{proof}
