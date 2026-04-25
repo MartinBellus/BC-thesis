@@ -6,18 +6,45 @@
 
 \section{Adversarial instance}
 
+For a given $\delta > 0$, we define a coeficient $\alpha_i$ as $\sqrt{2}^i
++ \delta (2 + \sqrt{2})^i$.
+
 We will construct an adversarial strategy, that forces any deterministic
 algorithm $\A$ to be at least $\sqrt{2}$-competitive.
 
 We can always ignore all but the heaviest pending packet from step $t - 2$ and
 all but two heaviest packets from step $t - 1$, as only those can be scheduled.
 
-We will distinguish two cases: \xxx{TODO}
-\begin{itemize}
-    \item The algorithm schedules the heaviest packet at time $k$.
-    \item The algorithm never schedules the heaviest packet. Therefore, we will
-    terminate the sequence after $k_0$ steps.
-\end{itemize}
+The adversary begins the instance by releasing two packets of weight $\alpha_0$
+with span $2$ and one packet of weight $\alpha_1$ with span $3$. At time $t$ we
+distinquish two cases:
+ \begin{enumerate}
+    \item $\A$ schedules the heaviest packet at time $t$.
+    \item $\A$ schedules one of the lighter packets at time $t$.
+\end{enumerate}
+
+In case $1$, the adversary terminates the sequence as shown in Figure
+\ref{img:general-end-stopping}. In case $2$, the adversary continues the
+sequence by releasing two packets of weight $\alpha_t$ with span $2$ and one
+packet of weight $\alpha_{t+1}$ with span $3$.
+
+\begin{lemma}\label{lem:alg-behaviour}
+Any reasonable algorithm $\A$ never schedules the lightest pending packet before
+the adversary terminates the sequence.
+\end{lemma}
+\begin{proof}
+We show, that if algorithm $\A$ schedules the lightest packet at time $t$, then
+it could have scheduled a heavier packet, which would increase its gain.
+
+Since the instance did not terminate after step $t$, the algorithm must have
+exactly $3$ pending packets of weigh $\alpha_t$, which can be scheduled in the
+next two steps. Therefore at least one of those packets can not be scheduled by $\A$. \xxx{TODO}
+\end{proof}
+
+After sufficiently many steps, the adversary can terminate the instance as shown in Figure
+\ref{img:general-end-infinite}.
+
+
 
 We argue, that during the beginning of the sequence \ref{img:general-start}, any
 reasonable algorithm schedules only the heaviest or second heaviest packet in
@@ -101,15 +128,135 @@ each slot.
 \section{Lowerbound}
 
 \begin{lemma}\label{lem:general-infinite}
-For each $\varepsilon > 0$ there exists $k$, such that
+Assume that the algorithm $\A$ never schedules the heaviest packet. Then, for all
+$\varepsilon > 0$ and $\delta > 0$, there exists $k_0$ such that terminating the
+general instance after $k_0$ steps yields a competitive ratio of at least
+$\sqrt{2} - \varepsilon$.
 \end{lemma}
 \begin{proof}
+
+Assume that the adversary terminates the instance after $k$ steps as shown in
+Figure~\ref{img:general-end-infinite}.
+
+By Lemma~\ref{lem:alg-behaviour}, at every step $t < k$ the algorithm $\A$
+schedules a packet of weight $\alpha_t$ with span $2$. At step $k$, $\A$ has
+three pending packets of weight $\alpha_k$ expiring at step $k + 2$ and two
+pending packets of weight $\alpha_{k - 1}$ expiring at step $k + 1$. Therefore, it
+can schedule packets of total weight at most $2\alpha_k$.
+
+The maximum gain of algorithm $\A$ is:
+
+$$
+W_{\A} = \sum_{i=0}^{k} \alpha_i + \alpha_{k}
+$$
+
+When we take the limit of $\frac{W_\A}{(\sqrt{2} + 2)^k}$ as $k$ approaches infinity,
+everything except for terms with $(\sqrt{2} + 2)^k$ and $(\sqrt{2} + 2)^{k+1}$
+vanishes, yielding:
+
+\begin{equation}\label{INF:eq1}
+\lim_{k \to \infty} \frac{W_\A}{(\sqrt{2} + 2)^k} =
+\delta \left( \frac{\sqrt{2} + 2}{\sqrt{2} + 1} + 1 \right)
+\end{equation}
+
+The optimal algorithm schedules all packets with span $3$ and the last two
+packets of weight $\alpha_{k}$ with span $2$, as shown in Figures
+\ref{img:general-start} and \ref{img:general-end-infinite}. This results in a
+gain of:
+
+$$
+W_{\OPT} = \sum_{i=1}^{k} \alpha_i + 2\alpha_k
+$$
+
+Again, when we take the limit of $\frac{W_\OPT}{(\sqrt{2} + 2)^k}$ as $k$ approaches
+infinity, most of the terms vanish, yielding:
+
+\begin{equation}\label{INF:eq2}
+\lim_{k \to \infty} \frac{W_\OPT}{(\sqrt{2} + 2)^k} =
+\delta \left( \frac{\sqrt{2} + 2}{\sqrt{2} + 1} + 2 \right)
+\end{equation}
+
+Combining Equations \ref{INF:eq1} and \ref{INF:eq2}, we compute the limit of the
+competitive ratio:
+
+$$
+\lim_{k \to \infty} \frac{W_\OPT}{W_\A} =
+\frac{\frac{2 + \sqrt{2}}{\sqrt{2} + 1} + 2}{\frac{2 + \sqrt{2}}{\sqrt{2} + 1} + 1}
+= 1 + \frac{1}{\frac{2 + \sqrt{2}}{\sqrt{2} + 1} + 1} = \sqrt{2}
+$$
+
+Therefore, for all $\varepsilon > 0$ and $\delta > 0$ there exists $k_0$ such that terminating
+the general instance after $k_0$ steps yields a competitive ratio of at least
+$\sqrt{2} - \varepsilon$.
 \end{proof}
 
 \begin{lemma}\label{lem:general-finite}
-If the algorithm $\A$ ever schedules the heaviest packet, the competitive ratio
-is at least $\sqrt{2} - \varepsilon$ for any $\varepsilon > 0$.
+If the algorithm $\A$ ever schedules the heaviest packet, then its competitive ratio
+is at least $\sqrt{2} - \varepsilon$, for every $\varepsilon > 0$.
 \end{lemma}
+\begin{proof}
+Let $k$ be the step at which $\A$ schedules the heaviest packet.
+
+As in Lemma~\ref{lem:general-infinite}, for each step $t < k$, the algorithm $\A$
+schedules a packet of weight $\alpha_t$ with span $2$. At step $k$, it schedules
+the heaviest packet of weight $\alpha_k$. After step $k$, $\A$ has three pending
+packets of weight $\alpha_{k-1}$ with deadline $k + 2$. Hence, it can schedule at
+most one of these packets before they expire. This results in a gain of:
+
+$$
+W_\A = \sum_{i=0}^{k} \alpha_i
+$$
+
+The optimal algorithm schedules the heaviest packet released at each step $t < k$
+and all packets released at step $k$, resulting in a gain of:
+
+$$
+W_\OPT = \sum_{i=1}^k \alpha_i + 2\alpha_{k-1}
+$$
+
+We compute the competitive ratio:
+
+$$
+\frac{W_\OPT}{W_\A} = \frac{\sum_{i=1}^k \alpha_i + 2\alpha_{k-1}}{\sum_{i=0}^{k} \alpha_i} =
+1 + \frac{2\alpha_{k-1} - \alpha_0}{\sum_{i=0}^{k} \alpha_i}
+$$
+
+Substituting the definition of $\alpha_i$ yields:
+
+$$
+\frac{W_\OPT}{W_\A} = 1 + \frac{2 \sqrt{2}^{k-1} - 1 + \delta (2 (2 +
+\sqrt{2}^{k-1})}{\frac{\sqrt{2}^{k+1} - 1}{\sqrt{2} - 1} + \delta \frac{(2 +
+\sqrt{2})^{k+1} - 1}{1 + \sqrt{2}}}
+$$
+
+Applying Lemma~\ref{lem:fraction}, we obtain:
+$$
+\frac{W_\OPT}{W_\A} \geq 1 + \min\left(\sqrt{2} - 1, \frac{2 (2 + \sqrt{2})^{k-1} - 1}{\frac{(2+\sqrt{2})^{k+1} - 1}{1 + \sqrt{2}}}\right)
+$$
+
+Consider the second term. As $k$ approaches infinity:
+
+$$
+\lim_{k \to \infty} \frac{2 (2 + \sqrt{2})^{k-1} - 1}{\frac{(2+\sqrt{2})^{k+1} - 1}{1 + \sqrt{2}}}
+= \frac{2 + 2\sqrt{2}}{(2 + \sqrt{2})^2} = \sqrt{2} - 1
+$$
+
+Therefore there exists $k_0$ such that for all $k \geq k_0$,
+$\frac{W_\OPT}{W_\A} \geq \sqrt{2} - \varepsilon$.
+
+Now we choose $\delta$ such that $\delta (2 + \sqrt{2})^{k_0}$ is negligible
+compared to $\sqrt{2}^{k_0}$. More formally, for any $k < k_0$, we take the
+limit as $\delta$ approaches $0$:
+
+$$
+\lim_{\delta \to 0} \frac{W_\OPT}{W_\A} =
+1 + \frac{2\sqrt{2}^{k-1} - 1}{\frac{\sqrt{2}^{k+1} - 1}{\sqrt{2} - 1}}
+= \sqrt{2}
+$$
+
+Therefore there exists $\delta > 0$ such that $\frac{W_\OPT}{W_\A} \geq \sqrt{2} -
+\varepsilon$ for all $k < k_0$. This completes the proof.
+\end{proof}
 
 
 \begin{lemma}\label{lem:fraction}
