@@ -2,7 +2,7 @@
 
 \chapter{General lowerbound}
 
-\xxx{TODO state what is known}
+\xxx{TODO}
 
 \section{Adversarial instance}
 
@@ -12,43 +12,47 @@ For a given $\delta > 0$, we define a coeficient $\alpha_i$ as $\sqrt{2}^i
 We will construct an adversarial strategy, that forces any deterministic
 algorithm $\A$ to be at least $\sqrt{2}$-competitive.
 
-We can always ignore all but the heaviest pending packet from step $t - 2$ and
-all but two heaviest packets from step $t - 1$, as only those can be scheduled.
-
 The adversary begins the instance by releasing two packets of weight $\alpha_0$
 with span $2$ and one packet of weight $\alpha_1$ with span $3$. At time $t$ we
 distinquish two cases:
  \begin{enumerate}
-    \item $\A$ schedules the heaviest packet at time $t$.
-    \item $\A$ schedules one of the lighter packets at time $t$.
+    \item $\A$ schedules the heaviest packet at step $t$.
+    \item $\A$ schedules one of the lighter packets at step $t$.
 \end{enumerate}
 
 In case $1$, the adversary terminates the sequence as shown in Figure
-\ref{img:general-end-stopping}. In case $2$, the adversary continues the
-sequence by releasing two packets of weight $\alpha_t$ with span $2$ and one
-packet of weight $\alpha_{t+1}$ with span $3$.
+\ref{img:general-end-stopping}. In this case, we say that $\A$ executed a
+\emph{greedy} step.
+
+In case $2$, the adversary continues the sequence by releasing two packets of
+weight $\alpha_t$ with span $2$ and one packet of weight $\alpha_{t+1}$ with
+span $3$. We show, that in this case, it is not beneficial for $\A$ to schedule
+a~packet released in step other than step $t$.
 
 \begin{lemma}\label{lem:alg-behaviour}
-Any reasonable algorithm $\A$ never schedules the lightest pending packet before
-the adversary terminates the sequence.
+Before the adversary terminates the sequence, for every step $t$ any reasonable
+algorithm $\A$ schedules only packets released at step $t$.
 \end{lemma}
 \begin{proof}
-We show, that if algorithm $\A$ schedules the lightest packet at time $t$, then
-it could have scheduled a heavier packet, which would increase its gain.
+Let $k$ be the first step in which $\A$ schedules a packet released at step
+$k' < k$. Let $p'$ denote the packet scheduled by $\A$ at step $k$, and let
+$p_1$ and $p_2$ denote the packets of weight $\alpha_k$ and span $2$ released at
+step $k$.
 
-Since the instance did not terminate after step $t$, the algorithm must have
-exactly $3$ pending packets of weigh $\alpha_t$, which can be scheduled in the
-next two steps. Therefore at least one of those packets can not be scheduled by $\A$. \xxx{TODO}
+We argue that if $\A$ schedules $p_1$ or $p_2$ instead of $p'$, then its gain
+does not decrease. Since $p'$ was released earlier than $p_1$ and $p_2$, we have
+$w(p') \leq w(p_1)$ (and similarly $w(p') \leq w(p_2)$). A potential issue arises
+only if $\A$ schedules both $p_1$ and $p_2$ at later steps. However, $p_1$ and
+$p_2$ expire at step $k + 2$, and $\A$ schedules a different packet at step $k$,
+so at least one of $p_1$ and $p_2$ is never scheduled. Therefore, $\A$ can
+schedule one of these packets instead of $p'$ without decreasing its overall
+gain.
 \end{proof}
 
 After sufficiently many steps, the adversary can terminate the instance as shown in Figure
 \ref{img:general-end-infinite}.
 
-
-
-We argue, that during the beginning of the sequence \ref{img:general-start}, any
-reasonable algorithm schedules only the heaviest or second heaviest packet in
-each slot.
+\xxx{TODO}
 
 \begin{figure}[ht]\centering
 \begin{tikzpicture}[x=8mm, y=6mm]
@@ -128,7 +132,7 @@ each slot.
 \section{Lowerbound}
 
 \begin{lemma}\label{lem:general-infinite}
-Assume that the algorithm $\A$ never schedules the heaviest packet. Then, for all
+Assume that the algorithm $\A$ never executes a greedy step. Then, for all
 $\varepsilon > 0$ and $\delta > 0$, there exists $k_0$ such that terminating the
 general instance after $k_0$ steps yields a competitive ratio of at least
 $\sqrt{2} - \varepsilon$.
@@ -147,16 +151,18 @@ can schedule packets of total weight at most $2\alpha_k$.
 The maximum gain of algorithm $\A$ is:
 
 $$
-W_{\A} = \sum_{i=0}^{k} \alpha_i + \alpha_{k}
+W_{\A} = \sum_{i=0}^{k} \alpha_i + \alpha_{k} =
+\frac{\sqrt{2}^{k+1} - 1}{\sqrt{2} - 1} + \sqrt{2}^k +
+\delta \left[ \frac{(2 + \sqrt{2})^{k+1} - 1}{1 + \sqrt{2}} + (2 + \sqrt{2})^k \right]
 $$
 
-When we take the limit of $\frac{W_\A}{(\sqrt{2} + 2)^k}$ as $k$ approaches infinity,
-everything except for terms with $(\sqrt{2} + 2)^k$ and $(\sqrt{2} + 2)^{k+1}$
+When we take the limit of $\frac{W_\A}{(2 + \sqrt{2})^k}$ as $k$ approaches infinity,
+everything except for terms with $(2 + \sqrt{2})^k$ and $(\sqrt{2} + 2)^{k+1}$
 vanishes, yielding:
 
 \begin{equation}\label{INF:eq1}
-\lim_{k \to \infty} \frac{W_\A}{(\sqrt{2} + 2)^k} =
-\delta \left( \frac{\sqrt{2} + 2}{\sqrt{2} + 1} + 1 \right)
+\lim_{k \to \infty} \frac{W_\A}{(2 + \sqrt{2})^k} =
+\delta \left( \frac{2 + \sqrt{2}}{1 + \sqrt{2}} + 1 \right)
 \end{equation}
 
 The optimal algorithm schedules all packets with span $3$ and the last two
@@ -165,15 +171,16 @@ packets of weight $\alpha_{k}$ with span $2$, as shown in Figures
 gain of:
 
 $$
-W_{\OPT} = \sum_{i=1}^{k} \alpha_i + 2\alpha_k
+W_{\OPT} = \sum_{i=1}^{k} \alpha_i + 2\alpha_k =
+\frac{\sqrt{2}^{k+1} - 1}{\sqrt{2} - 1} + 2\sqrt{2}^k + \delta \left( \frac{(2 + \sqrt{2})^{k+1} - 1}{1 + \sqrt{2}} + 2(2 + \sqrt{2})^k\right)
 $$
 
-Again, when we take the limit of $\frac{W_\OPT}{(\sqrt{2} + 2)^k}$ as $k$ approaches
+Again, when we take the limit of $\frac{W_\OPT}{(2 + \sqrt{2})^k}$ as $k$ approaches
 infinity, most of the terms vanish, yielding:
 
 \begin{equation}\label{INF:eq2}
-\lim_{k \to \infty} \frac{W_\OPT}{(\sqrt{2} + 2)^k} =
-\delta \left( \frac{\sqrt{2} + 2}{\sqrt{2} + 1} + 2 \right)
+\lim_{k \to \infty} \frac{W_\OPT}{(2 + \sqrt{2})^k} =
+\delta \left( \frac{2 + \sqrt{2}}{1 + \sqrt{2}} + 2 \right)
 \end{equation}
 
 Combining Equations \ref{INF:eq1} and \ref{INF:eq2}, we compute the limit of the
@@ -181,57 +188,59 @@ competitive ratio:
 
 $$
 \lim_{k \to \infty} \frac{W_\OPT}{W_\A} =
-\frac{\frac{2 + \sqrt{2}}{\sqrt{2} + 1} + 2}{\frac{2 + \sqrt{2}}{\sqrt{2} + 1} + 1}
-= 1 + \frac{1}{\frac{2 + \sqrt{2}}{\sqrt{2} + 1} + 1} = \sqrt{2}
+\frac{\frac{2 + \sqrt{2}}{1 + \sqrt{2}} + 2}{\frac{2 + \sqrt{2}}{1 + \sqrt{2}} + 1}
+= 1 + \frac{1}{\frac{2 + \sqrt{2}}{1 + \sqrt{2}} + 1} = \sqrt{2}
 $$
 
-Therefore, for all $\varepsilon > 0$ and $\delta > 0$ there exists $k_0$ such that terminating
-the general instance after $k_0$ steps yields a competitive ratio of at least
-$\sqrt{2} - \varepsilon$.
+Therefore, for all $\varepsilon > 0$ and $\delta > 0$ there exists $k_0$ such
+that terminating the general instance after $k_0$ steps yields a competitive
+ratio of at least $\sqrt{2} - \varepsilon$.
 \end{proof}
 
 \begin{lemma}\label{lem:general-finite}
-If the algorithm $\A$ ever schedules the heaviest packet, then its competitive ratio
-is at least $\sqrt{2} - \varepsilon$, for every $\varepsilon > 0$.
-\end{lemma}
+If the algorithm $\A$ ever executes a greedy step, then there exists
+$\delta > 0$ such that its competitive ratio is at least $\sqrt{2} -
+\varepsilon$, for every $\varepsilon > 0$. \end{lemma}
 \begin{proof}
-Let $k$ be the step at which $\A$ schedules the heaviest packet.
+Let $W_\A(k)$ and $W_\OPT(k)$ be the total gains of algorithms $\A$ and $\OPT$
+if $\A$ executes a greedy step in step $k$.
 
 As in Lemma~\ref{lem:general-infinite}, for each step $t < k$, the algorithm $\A$
 schedules a packet of weight $\alpha_t$ with span $2$. At step $k$, it schedules
 the heaviest packet of weight $\alpha_k$. After step $k$, $\A$ has three pending
-packets of weight $\alpha_{k-1}$ with deadline $k + 2$. Hence, it can schedule at
+packets of weight $\alpha_{k-1}$ with deadline $k + 2$. It can schedule at
 most one of these packets before they expire. This results in a gain of:
 
 $$
-W_\A = \sum_{i=0}^{k} \alpha_i
+W_\A(k) = \sum_{i=0}^{k} \alpha_i
 $$
 
 The optimal algorithm schedules the heaviest packet released at each step $t < k$
 and all packets released at step $k$, resulting in a gain of:
 
 $$
-W_\OPT = \sum_{i=1}^k \alpha_i + 2\alpha_{k-1}
+W_\OPT(k) = \sum_{i=1}^k \alpha_i + 2\alpha_{k-1}
 $$
 
 We compute the competitive ratio:
 
 $$
-\frac{W_\OPT}{W_\A} = \frac{\sum_{i=1}^k \alpha_i + 2\alpha_{k-1}}{\sum_{i=0}^{k} \alpha_i} =
+\frac{W_\OPT(k)}{W_\A(k)} = \frac{\sum_{i=1}^k \alpha_i + 2\alpha_{k-1}}{\sum_{i=0}^{k} \alpha_i} =
 1 + \frac{2\alpha_{k-1} - \alpha_0}{\sum_{i=0}^{k} \alpha_i}
 $$
 
 Substituting the definition of $\alpha_i$ yields:
 
 $$
-\frac{W_\OPT}{W_\A} = 1 + \frac{2 \sqrt{2}^{k-1} - 1 + \delta (2 (2 +
-\sqrt{2}^{k-1})}{\frac{\sqrt{2}^{k+1} - 1}{\sqrt{2} - 1} + \delta \frac{(2 +
+\frac{W_\OPT(k)}{W_\A(k)} =
+1 + \frac{2 \sqrt{2}^{k-1} - 1 + \delta (2 (2 + \sqrt{2})^{k-1} - 1)}
+{\frac{\sqrt{2}^{k+1} - 1}{\sqrt{2} - 1} + \delta \frac{(2 +
 \sqrt{2})^{k+1} - 1}{1 + \sqrt{2}}}
 $$
 
 Applying Lemma~\ref{lem:fraction}, we obtain:
 $$
-\frac{W_\OPT}{W_\A} \geq 1 + \min\left(\sqrt{2} - 1, \frac{2 (2 + \sqrt{2})^{k-1} - 1}{\frac{(2+\sqrt{2})^{k+1} - 1}{1 + \sqrt{2}}}\right)
+\frac{W_\OPT(k)}{W_\A(k)} \geq 1 + \min\left(\sqrt{2} - 1, \frac{2 (2 + \sqrt{2})^{k-1} - 1}{\frac{(2+\sqrt{2})^{k+1} - 1}{1 + \sqrt{2}}}\right)
 $$
 
 Consider the second term. As $k$ approaches infinity:
@@ -242,20 +251,22 @@ $$
 $$
 
 Therefore there exists $k_0$ such that for all $k \geq k_0$,
-$\frac{W_\OPT}{W_\A} \geq \sqrt{2} - \varepsilon$.
+$\frac{W_\OPT(k)}{W_\A(k)} \geq \sqrt{2} - \varepsilon$.
 
 Now we choose $\delta$ such that $\delta (2 + \sqrt{2})^{k_0}$ is negligible
 compared to $\sqrt{2}^{k_0}$. More formally, for any $k < k_0$, we take the
 limit as $\delta$ approaches $0$:
 
 $$
-\lim_{\delta \to 0} \frac{W_\OPT}{W_\A} =
+\lim_{\delta \to 0+} \frac{W_\OPT(k)}{W_\A(k)} =
 1 + \frac{2\sqrt{2}^{k-1} - 1}{\frac{\sqrt{2}^{k+1} - 1}{\sqrt{2} - 1}}
 = \sqrt{2}
 $$
 
-Therefore there exists $\delta > 0$ such that $\frac{W_\OPT}{W_\A} \geq \sqrt{2} -
-\varepsilon$ for all $k < k_0$. This completes the proof.
+Therefore for all such values of $k$, there exists $\delta_k > 0$, such that
+$\frac{W_\OPT(k)}{W_\A(k)} \geq \sqrt{2} - \varepsilon$. If we set $\delta =
+\min_{k < k_0} \delta_k$, the competitive ratio is at least $\sqrt{2} -
+\varepsilon$ for all $k < k_0$.
 \end{proof}
 
 
