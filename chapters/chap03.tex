@@ -1,20 +1,30 @@
 \def\A{\mathcal{A}}
 
-\chapter{General lowerbound}
+\chapter{General lower bound}
 
-\xxx{TODO}
+A result from Chrobak \emph{et al.} \cite{CHROBAK2004204} shows that no
+algorithm is better than $Q$\nobreakdash-competitive (for $Q \approx 1.377$) on $2$-uniform instances.
+Since $(2,3)$-bounded instances are a superset of $2$-uniform instances, this
+bound also holds for our instances.
+
+In this chapter we improve this lower bound to $\sqrt{2}$ by constructing an
+adversarial strategy that forces such competitive ratio. Our result matches the
+result of Chin \emph{et al.} \cite{CHIN2006255} on $2$-bounded instances for
+deterministic memoryless algorithms, which is curious.
 
 \section{Adversarial instance}
 
-For a given $\delta > 0$, we define a coeficient $\alpha_i$ as $\sqrt{2}^i
-+ \delta (2 + \sqrt{2})^i$.
-
 We will construct an adversarial strategy, that forces any deterministic
-algorithm $\A$ to be at least $\sqrt{2}$-competitive.
+algorithm $\A$ to be at least $\sqrt{2}$-competitive. To simplify notation, we
+identify packets by their weight and span. This uniquely deternines the packet,
+up to the step, in which it was released. By Lemma \xxx{TODO} we can assume,
+that the additive constant in the definition of competitivness is $0$.
 
-The adversary begins the instance by releasing two packets of weight $\alpha_0$
-with span $2$ and one packet of weight $\alpha_1$ with span $3$. At time $t$ we
-distinquish two cases:
+For a fixed $\delta > 0$, we define a sequence of coeficients $\alpha_i$ as
+$\sqrt{2}^i + \delta (2 + \sqrt{2})^i$. The adversary begins the instance by
+releasing two packets of weight $\alpha_0$ with span $2$ and one packet of
+weight $\alpha_1$ with span $3$. At time $t$ we distinquish two cases:
+
  \begin{enumerate}
     \item $\A$ schedules the heaviest packet at step $t$.
     \item $\A$ schedules one of the lighter packets at step $t$.
@@ -52,7 +62,24 @@ gain.
 After sufficiently many steps, the adversary can terminate the instance as shown in Figure
 \ref{img:general-end-infinite}.
 
-\xxx{TODO}
+The whole adversarial strategy can be summarized by the following procedure:
+
+\begin{algorithmic}[1]
+\State Set $\delta$ and $k_0$ according to Lemmas \ref{lem:general-finite} and \ref{lem:general-infinite}
+\State $t \gets 0$
+\State release packets $(\alpha_t, 2), (\alpha_t, 2), (\alpha_{t+1}, 3)$
+\While{$t \leq k_0$}
+\If{$\A$ executed greedy step}
+    \State execute $(\alpha_{t}, 2), (\alpha_{t}, 2), (\alpha_{t+1}, 3)$
+    \State \textbf{terminate}
+\EndIf
+\State $t \gets t + 1$
+\State execute $(\alpha_{t}, 3)$
+\State release packets $(\alpha_t, 2), (\alpha_t, 2), (\alpha_{t+1}, 3)$
+\EndWhile
+\State release packets $(\alpha_t, 2), (\alpha_t, 2)$
+\State execute $(\alpha_{t}, 2), (\alpha_{t}, 2)$
+\end{algorithmic}
 
 \begin{figure}[ht]\centering
 \begin{tikzpicture}[x=8mm, y=6mm]
@@ -288,3 +315,7 @@ d m \leq b
 
 Summing these inequalities gives us the desired inequality.
 \end{proof}
+
+\begin{thm}
+
+\end{thm}

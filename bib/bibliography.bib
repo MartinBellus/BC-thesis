@@ -31,6 +31,25 @@
     abstract = {We study an online unit-job scheduling problem arising in buffer management. Each job is specified by its release time, deadline, and a nonnegative weight. Due to overloading conditions, some jobs have to be dropped. The goal is to maximize the total weight of scheduled jobs. We present several competitive online algorithms for various versions of unit-job scheduling, as well as some lower bounds on the competitive ratios. We first give a randomized algorithm RMix with competitive ratio of e/(e−1)≈1.582. This is the first algorithm for this problem with competitive ratio smaller than 2. Then we consider s-bounded instances, where the span of each job (deadline minus release time) is at most s. We give a 1.25-competitive randomized algorithm for 2-bounded instances, matching the known lower bound. We also give a deterministic algorithm Edfα, whose competitive ratio on s-bounded instances is 2−2/s+o(1/s). For 3-bounded instances its ratio is ϕ≈1.618, matching the known lower bound. In s-uniform instances, the span of each job is exactly s. We show that no randomized algorithm can be better than 1.25-competitive on s-uniform instances, if the span s is unbounded. For s=2, our proof gives a lower bound of 4−22≈1.172. Also, in the 2-uniform case, we prove a lower bound of 2≈1.414 for deterministic memoryless algorithms, matching a known upper bound. Finally, we investigate the multiprocessor case and give a 1/(1−(mm+1)m)-competitive algorithm for m processors. We also show improved lower bounds for the general and s-uniform cases.}
 }
 
+@InProceedings{CHROBAK2004204,
+    author="Chrobak, Marek
+    and Jawor, Wojciech
+    and Sgall, Ji{\v{r}}{\'i}
+    and Tich{\'y}, Tom{\'a}{\v{s}}",
+    editor="Albers, Susanne
+    and Radzik, Tomasz",
+    title="Improved Online Algorithms for Buffer Management in QoS Switches",
+    booktitle="Algorithms -- ESA 2004",
+    year="2004",
+    publisher="Springer Berlin Heidelberg",
+    address="Berlin, Heidelberg",
+    pages="204--215",
+    abstract="The following buffer management problem is studied: packets with specified weights and deadlines arrive at a network switch and need to be forwarded so that the total weight of forwarded packets is maximized. A packet not forwarded before its deadline brings no profit. The main result is an online {\$}{\backslash}frac{\{}64{\}}{\{}33{\}}{\backslash}approx 1.939{\$}-competitive algorithm, the first deterministic algorithm for this problem with competitive ratio below 2. In the s-uniform case, where for all packets the deadline equals the arrival time plus s, we give an {\$}{\{}5{\}}-{\backslash}sqrt{\{}10{\}} {\backslash}approx 1.838{\$}-competitive algorithm. This algorithm achieves the same ratio in a more general scenario when all packets are similarly ordered. For the 2-uniform case we give an algorithm with ratio ≈ 1.377 and a matching lower bound.",
+    isbn="978-3-540-30140-0",
+    doi = {10.1007/978-3-540-30140-0_20}
+    }
+}
+
 @BOOK{Andel07,
   title = {Základy matematické statistiky},
   publisher = {Matfyzpress},
